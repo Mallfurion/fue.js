@@ -1,11 +1,11 @@
 // https://github.com/vuejs/core/blob/main/packages/reactivity/src/reactive.ts
-export function reactive(target) {
+export function reactive(target, appInstance = null) {
   if (target === null || typeof target !== "object") {
     return target;
   }
 
   for (const property in target) {
-    target[property] = reactive(target[property]);
+    target[property] = reactive(target[property], appInstance);
   }
 
   const handler = {
@@ -14,10 +14,12 @@ export function reactive(target) {
     },
 
     set: (target, property, value, receiver) => {
+      appInstance?.render();
       return Reflect.set(target, property, value, receiver);
     },
 
     deleteProperty: (target, property) => {
+      appInstance?.render();
       return Reflect.deleteProperty(target, property);
     },
   };
